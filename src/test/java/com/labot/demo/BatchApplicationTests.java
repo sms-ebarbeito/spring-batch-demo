@@ -1,4 +1,4 @@
-package com.labot.batch;
+package com.labot.demo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
