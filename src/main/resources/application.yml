@@ -21,3 +21,4 @@ spring:
 batch:
   import:
     threads: 8
+    chunk: 10

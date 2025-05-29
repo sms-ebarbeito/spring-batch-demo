@@ -43,6 +43,10 @@ public class BatchConfig {
     @Setter
     private Integer importThreads;
 
+    @Value("${batch.import.chunk:10}")
+    @Setter
+    private Integer chunk;
+
     @Value("${batch.table.prefix:BATCH_}")
     private String tablePrefix;
 
@@ -97,8 +101,8 @@ public class BatchConfig {
 
     @Bean
     public Step createImportStep(@Qualifier("taskExecutor")TaskExecutor taskExecutor) {
-        int t = importThreads == null ? 1 : importThreads;
-        int c = 10;
+        int t = importThreads;
+        int c = chunk;
         return new StepBuilder("chunk_create_import", jobRepository)
                 .chunk(c, transactionManager)
                 .reader(createImportReader(batchImportService, null, c, "STEP_READER_IMPORTS"))
