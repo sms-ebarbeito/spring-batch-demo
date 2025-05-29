@@ -22,7 +22,7 @@ mvn clean spring-boot:run
 This demo sets up a Spring Batch Job with the typical structure:
 
 * Reader: Reads data from the import table (8,000 randomly generated rows)
-* Processor: Transforms each record into a Person entity
+* Processor: Transforms each record into a Person entity and sleep (100ms to simulate a heavy load)
 * Writer: Persists the processed Person records into the person table using a JPA repository
 
 ## 👥 Database Tables
@@ -58,6 +58,23 @@ GET /api/v1/import
 ```http 
 GET /api/v1/person
 ```
+
+### Monitor the job
+```http 
+GET /api/v1/job/{Number:id}     --example 1
+```
+
+### Get all jobs
+```http 
+GET /api/v1/jobs
+```
+
+### Get last job by name
+```http 
+GET /api/v1/job/last/{job_name}   --example import_persons
+```
+
+
 
 ## 🛠 Test Data
 The import table is preloaded with 8,000 entries via the PrepareSqlDemoScript class. These entries simulate realistic, randomized user data.

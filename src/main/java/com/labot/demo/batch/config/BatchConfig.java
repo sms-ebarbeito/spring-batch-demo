@@ -92,7 +92,7 @@ public class BatchConfig {
     @Bean("jobImport")
     public Job jobImport(@Qualifier("taskExecutor")TaskExecutor taskExecutor,
                                   BatchImportListener listener) {
-        return new JobBuilder("import_residents", jobRepository)
+        return new JobBuilder("import_persons", jobRepository) //Name of the Job
                 .incrementer(new RunIdIncrementer())
                 .start(createImportStep(taskExecutor))
                 .listener(listener)
@@ -101,17 +101,15 @@ public class BatchConfig {
 
     @Bean
     public Step createImportStep(@Qualifier("taskExecutor")TaskExecutor taskExecutor) {
-        int t = importThreads;
-        int c = chunk;
-        return new StepBuilder("chunk_create_import", jobRepository)
-                .chunk(c, transactionManager)
-                .reader(createImportReader(batchImportService, null, c, "STEP_READER_IMPORTS"))
+        return new StepBuilder("chunk_import_step", jobRepository) //Name of the step
+                .chunk(chunk, transactionManager)
+                .reader(createImportReader(batchImportService, null, chunk, "STEP_READER_IMPORTS"))
                 .processor(createDelegatedItemProcessor(batchImportService))
                 .writer(createDelegatedItemWriter(batchImportService, "STEP_WRITER_IMPORT", false))
                 .faultTolerant()
                 .skipPolicy(new ExternalRecordVerificationSkipper())
                 .taskExecutor(taskExecutor)
-                .throttleLimit(t)
+                .throttleLimit(importThreads)
                 .build();
     }
 

@@ -74,6 +74,11 @@ public class BatchImportService implements  DelegatedItemReaderRepository<Import
             person.setUsername(importEntity.getEmail().split("@")[0]);
         }
         person.setBirthYear(LocalDate.now().getYear() -importEntity.getAge());
+
+        try {
+            Thread.sleep(100); //SLEEP 100ms to simulate a heavy task
+        } catch (InterruptedException ignored) {}
+
         return person;
     }
 
