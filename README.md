@@ -63,6 +63,38 @@ GET /api/v1/person
 ```http 
 GET /api/v1/job/{Number:id}     --example 1
 ```
+```json
+{
+    "jobId": 1,
+    "jobName": "import_persons",
+    "status": "STARTED",
+    "startTime": "2025-05-29T14:49:06.059543",
+    "endTime": null,
+    "stepExecutions": [
+        {
+            "stepName": "chunk_import_step",
+            "status": "STARTED",
+            "startTime": "2025-05-29T14:49:06.289863",
+            "endTime": null,
+            "readCount": 880,
+            "writeCount": 880,
+            "commitCount": 88,
+            "skipCount": 0,
+            "rollbackCount": 0,
+            "readSkipCount": 0,
+            "processSkipCount": 0,
+            "writeSkipCount": 0
+        }
+    ],
+    "jobParameters": {
+        "EXECUTION_TIME": "2025-05-29T17:49:06.034+00:00"
+    },
+    "progress": 11,
+    "unitProgress": "%",
+    "totalToProcess": 8000,
+    "position": 880
+}
+```
 
 ### Get all jobs
 ```http 
