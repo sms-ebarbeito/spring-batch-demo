@@ -35,6 +35,21 @@ Pagination: 10 items per chunk
 
 Concurrency: 8 threads for parallel processing
 
+configured via application.yml
+
+The main service to do the Job is BatchImportService and BatchImportListener
+
+At Listener you can configure the @AfterJob and @BeforeJob to run needed prepare task to begin or send notifiers after finish
+Also has a method called getTotalCount to give the total items to process by the batch to make a % advance and report to the user.
+
+At BatchImportService:
+* readPage: how the reader acquires data using some repository or service using filters and pageable
+* process: In this case is used as a mapper, but could have call to another service to complex tasks to transform the data
+* write: Simply writes the output of the process, send to another system or whatever you need.
+
+To start the job simply call the BatchStarterService.createImportTask with the parameters to pass to the job.
+
+
 ## 🔁 Batch Execution
 Trigger the batch import job via:
 
