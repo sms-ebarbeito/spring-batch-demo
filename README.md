@@ -1,138 +1,125 @@
-# 🌀 Spring Batch Demo
+# Spring Batch Demo
 
-A simple and scalable Spring Boot project showcasing how to use **Spring Batch** with **JPA** and an **in-memory H2 database**. This demo reads, processes, and writes large volumes of data asynchronously using multi-threaded batch processing.
+This project is a simple demonstration of how to use [Spring Batch](https://spring.io/projects/spring-batch) to process and transform data efficiently in a Java application.
 
----
-
-## ✅ Requirements
-
-- **Java:** 21
-- **Build Tool:** Maven
+It is designed as a **learning resource** for developers who are new to Spring Batch. The example covers the basic components of a batch job (reader, processor, writer), shows how to use a multithreaded step, and stores everything in an in-memory H2 database.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 What This Project Does
 
-To run the application locally:
+It simulates a batch process that:
+1. Reads a list of randomly generated `Person` entities from a database.
+2. Processes each person and transforms them into a `User` object.
+3. Writes the processed users to another table.
 
-```bash
-mvn clean spring-boot:run
-``` 
-## ⚙ How It Works
-This demo sets up a Spring Batch Job with the typical structure:
+> The transformation is simple on purpose — the goal is to focus on how Spring Batch works, not on the business logic itself.
 
-* Reader: Reads data from the import table (8,000 randomly generated rows)
-* Processor: Transforms each record into a Person entity and sleep (100ms to simulate a heavy load)
-* Writer: Persists the processed Person records into the person table using a JPA repository
+---
 
-## 👥 Database Tables
-* import – Contains test data representing raw people records
-* person – Initially empty; gets populated by the batch job
+## 🗂️ Technologies Used
 
-The job uses:
+- Java 21
+- Spring Boot
+- Spring Batch
+- Spring Data JPA
+- H2 Database (in-memory)
+- Maven
 
-Pagination: 10 items per chunk
+---
 
-Concurrency: 8 threads for parallel processing
+## 🧩 Key Concepts Demonstrated
 
-configured via application.yml
+| Spring Batch Concept | Where it's Used |
+|----------------------|-----------------|
+| `ItemReader`         | Reads people from the `people_import` table |
+| `ItemProcessor`      | Transforms a `Person` into a `User` |
+| `ItemWriter`         | Persists the `User` into the `user` table |
+| `Job` and `Step`     | Defined in the batch configuration |
+| Multithreading       | Step is configured with a `TaskExecutor` |
 
-The main service to do the Job is BatchImportService and BatchImportListener
+---
 
-At Listener you can configure the @AfterJob and @BeforeJob to run needed prepare task to begin or send notifiers after finish
-Also has a method called getTotalCount to give the total items to process by the batch to make a % advance and report to the user.
+## 🛠️ How to Run the Project
 
-At BatchImportService:
-* readPage: how the reader acquires data using some repository or service using filters and pageable
-* process: In this case is used as a mapper, but could have call to another service to complex tasks to transform the data
-* write: Simply writes the output of the process, send to another system or whatever you need.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/sms-ebarbeito/spring-batch-demo.git
+   cd spring-batch-demo
+   ```
 
-To start the job simply call the BatchStarterService.createImportTask with the parameters to pass to the job.
+2. **Build and run**
+   ```bash
+   ./mvnw spring-boot:run
+   ```
 
+3. **Check the console**
+   You will see logs of the batch job reading, processing, and writing data.
 
-## 🔁 Batch Execution
-Trigger the batch import job via:
+4. **Access the H2 Console (optional)**
+- URL: `http://localhost:8080/h2-console`
+- JDBC URL: `jdbc:h2:mem:testdb`
+- Username: `sa`
+- Password: *(leave empty)*
+
+You can inspect the tables `people_import` and `user` to verify the processing result.
+
+---
+
+## 📦 Project Structure
 
 ```
-GET http://localhost:8080/api/v1/batch/execute
+src
+├── main
+│   ├─ java
+│   │  └ com.kricom.labot.demo
+│   │     ├── admin
+│   │     │    └── controller/  → Batch Administration
+│   │     ├── batch
+│   │     │    ├── config/      → Batch job configuration
+│   │     │    └── service/     → Support services for the Job and the BatchStarterService
+│   │     ├── model/            → Entities: Person, User
+│   │     ├── processor/        → PersonToUserProcessor
+│   │     ├── repository/       → JPA repositories
+│   │     └── SpringBatchDemoApplication.java
+│   └── resources
+│       ├── application.properties
+│       └── data.sql            → Generates 8000 sample people
 ```
 
-## 📥 REST API Endpoints
-### Trigger Batch Job
+---
 
-```http
-GET /api/v1/batch/execute
-```
+## 📌 Educational Tips
 
-### Retrieve Raw Import Data
-```http 
-GET /api/v1/import
-```
+- The processor simulates a heavy transformation by sleeping 100ms per item.
+- The batch step is executed with a multithreaded executor (4 threads).
+- Try changing the chunk size or thread pool to observe the performance difference.
 
-### Retrieve Processed Person Data
-```http 
-GET /api/v1/person
-```
+---
 
-### Monitor the job
-```http 
-GET /api/v1/job/{Number:id}     --example 1
-```
-```json
-{
-    "jobId": 1,
-    "jobName": "import_persons",
-    "status": "STARTED",
-    "startTime": "2025-05-29T14:49:06.059543",
-    "endTime": null,
-    "stepExecutions": [
-        {
-            "stepName": "chunk_import_step",
-            "status": "STARTED",
-            "startTime": "2025-05-29T14:49:06.289863",
-            "endTime": null,
-            "readCount": 880,
-            "writeCount": 880,
-            "commitCount": 88,
-            "skipCount": 0,
-            "rollbackCount": 0,
-            "readSkipCount": 0,
-            "processSkipCount": 0,
-            "writeSkipCount": 0
-        }
-    ],
-    "jobParameters": {
-        "EXECUTION_TIME": "2025-05-29T17:49:06.034+00:00"
-    },
-    "progress": 11,
-    "unitProgress": "%",
-    "totalToProcess": 8000,
-    "position": 880
-}
-```
+## 📚 Want to Go Further?
 
-### Get all jobs
-```http 
-GET /api/v1/jobs
-```
+- Add error handling or skip logic using `SkipPolicy`.
+- Write the output to a CSV instead of the database.
+- Use `JobParameters` to make the job configurable at runtime.
+- Try database paging with `JpaPagingItemReader`.
 
-### Get last job by name
-```http 
-GET /api/v1/job/last/{job_name}   --example import_persons
-```
+---
 
+## 🤝 Contributing
 
+This is a learning project — feel free to fork it, suggest improvements, or use it as a base for your own experiments.
 
-## 🛠 Test Data
-The import table is preloaded with 8,000 entries via the PrepareSqlDemoScript class. These entries simulate realistic, randomized user data.
+---
 
-## 📚 Technologies Used
-* Spring Boot
-* Spring Batch
-* Spring Data JPA
-* H2 In-Memory Database
-* Maven
+## 🧑‍💻 Author
+
+**Enrique Barbeito**  
+[GitHub Profile](https://github.com/sms-ebarbeito)  
+Argentina 🇦🇷
+
+---
 
 ## 📝 License
-This project is for educational and demonstration purposes.
 
+This project is open source and free to use.
