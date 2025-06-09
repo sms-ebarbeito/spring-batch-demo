@@ -22,9 +22,9 @@ public class TaskController {
     @GetMapping("/jobs")
     public Page<JobExecutionDTO> listAllJobExecutions(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                                       @RequestParam(value = "size", defaultValue = "20") Integer size,
-                                                      @RequestParam(value = "orderBy", defaultValue = "code") String orderBy,
+                                                      @RequestParam(value = "orderBy", defaultValue = "jobId") String orderBy,
                                                       @RequestParam(value = "direction", defaultValue = "asc") String direction,
-                                                      @RequestParam(value = "search", required = false) String search) {
+                                                      @RequestParam(value = "search", defaultValue = "") String search) {
         return jobStatusService.listAllJobExecutions(page, size, orderBy, direction, search);
     }
 

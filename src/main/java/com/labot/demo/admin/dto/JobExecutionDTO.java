@@ -2,6 +2,7 @@ package com.labot.demo.admin.dto;
 
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +13,8 @@ public class JobExecutionDTO {
     private Long jobId;
     private String jobName;
     private String status;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private Timestamp startTime;
+    private Timestamp endTime;
 
     private List<StepExecutionDTO> stepExecutions;
 

@@ -1,6 +1,7 @@
 package com.labot.demo.admin.utils;
 
 import com.labot.demo.admin.dto.JobExecutionDTO;
+import com.labot.demo.admin.entity.BatchJobExecution;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class PageBatchUtils {
 
-    public static boolean filterJobExecution(JobExecution jobExecution, String search) {
+    public static boolean filterJobExecution(BatchJobExecution jobExecution, String search) {
         if (search == null || search.isEmpty()) {
             return true;
         }
@@ -27,7 +28,7 @@ public class PageBatchUtils {
 
             switch (key) {
                 case "status":
-                    if (!jobExecution.getStatus().toString().toLowerCase().contains(value)) {
+                    if (!jobExecution.getStatus().toLowerCase().contains(value)) {
                         return false;
                     }
                     break;
@@ -47,7 +48,7 @@ public class PageBatchUtils {
                     }
                     break;
                 case "jobid":
-                    if (!jobExecution.getId().toString().equals(value)) {
+                    if (!jobExecution.getJobId().toString().equals(value)) {
                         return false;
                     }
                     break;
